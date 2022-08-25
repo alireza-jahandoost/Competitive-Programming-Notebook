@@ -4,6 +4,10 @@
 // modify(l, r, v): modify elements from l to r by v
 // calc(l, r): returns calculation of [l,r)
 
+// condition: (a OP1 v) OP2 (b OP1 v) = (a OP2 b) OP 1
+// example: (a + v) min (b + v) = (a min b) + v
+// modify: OP1		calc: OP2
+
 struct segtree{
 	int size;
 	vector<long long> operations;
