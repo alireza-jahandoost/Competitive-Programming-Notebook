@@ -52,7 +52,7 @@ struct segtree{
 		operations[x] = NO_OPERATION;
 	}
 
-	void build(vector<int>&a, int x, int lx, int rx){
+	void build(vector<long long>&a, int x, int lx, int rx){
 		if(rx - lx == 1){
 			if(lx < (int)a.size())
 				values[x] = a[lx];
@@ -65,11 +65,11 @@ struct segtree{
 		values[x] = calc_op(values[x*2+1], values[x*2+2]);
 	}
 
-	void build(vector<int>&a){
+	void build(vector<long long>&a){
 		build(a, 0, 0, size);
 	}
  
-	void modify(int l, int r, int v, int x, int lx, int rx){
+	void modify(int l, int r, long long v, int x, int lx, int rx){
 		propagate(x, lx, rx);
 		if(r <= lx || l >= rx){
 			return;
@@ -89,7 +89,7 @@ struct segtree{
 		values[x] = calc_op(values[2*x+1], values[2*x+2]);
 	}
  
-	void modify(int l, int r, int v){
+	void modify(int l, int r, long long v){
 		modify(l,r,v,0,0,size);
 	}
  
