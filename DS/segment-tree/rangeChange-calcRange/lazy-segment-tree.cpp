@@ -8,33 +8,34 @@
 // example: (a + v) min (b + v) = (a min b) + v
 // modify: OP1		calc: OP2
 
+template <typename SegmentType>
 struct segtree{
 	int size;
-	vector<long long> operations;
-	vector<long long> values;
+	vector<SegmentType> operations;
+	vector<SegmentType> values;
 	// NEEDS_CHANGE
-	const long long INITIAL_OPERATION_VALUE = 0;
-	const long long INITIAL_VALUES_VALUE = 0;
-	const long long NO_OPERATION = 0;
-	const long long NEUTRAL_ELEMENT = LLONG_MAX;
+	const SegmentType INITIAL_OPERATION_VALUE = 0;
+	const SegmentType INITIAL_VALUES_VALUE = 0;
+	const SegmentType NO_OPERATION = 0;
+	const SegmentType NEUTRAL_ELEMENT = LLONG_MAX;
 
-	long long modify_op(long long a, long long b, long long len){
+	SegmentType modify_op(SegmentType a, SegmentType b, long long len){
 		return a + b;
 	}
 
-	long long calc_op(long long a, long long b){
+	SegmentType calc_op(SegmentType a, SegmentType b){
 		return min(a,b);
 	}
 	// END_NEEDS_CHANGE
 
-	void apply_modify(long long &a, long long b, long long len){
+	void apply_modify(SegmentType &a, SegmentType b, long long len){
 		a = modify_op(a,b,len);
 	}
 
-	void apply_calc(long long &a, long long b){
+	void apply_calc(SegmentType &a, SegmentType b){
 		a = calc_op(a,b);
 	}
- 
+
 	void init(int n){
 		size = 1;
 		while(size < n) size *= 2;
@@ -52,7 +53,7 @@ struct segtree{
 		operations[x] = NO_OPERATION;
 	}
 
-	void build(vector<long long>&a, int x, int lx, int rx){
+	void build(vector<SegmentType>&a, int x, int lx, int rx){
 		if(rx - lx == 1){
 			if(lx < (int)a.size())
 				values[x] = a[lx];
@@ -65,53 +66,53 @@ struct segtree{
 		values[x] = calc_op(values[x*2+1], values[x*2+2]);
 	}
 
-	void build(vector<long long>&a){
+	void build(vector<SegmentType>&a){
 		build(a, 0, 0, size);
 	}
- 
-	void modify(int l, int r, long long v, int x, int lx, int rx){
+
+	void modify(int l, int r, SegmentType v, int x, int lx, int rx){
 		propagate(x, lx, rx);
 		if(r <= lx || l >= rx){
 			return;
 		}
- 
+
 		if(r >= rx && l <= lx){
 			apply_modify(operations[x], v, 1);
 			apply_modify(values[x], v, rx - lx);
 			return;
 		}
- 
+
 		int m = (lx + rx) / 2;
- 
+
 		modify(l,r,v,2*x+1,lx,m);
 		modify(l,r,v,2*x+2,m,rx);
 
 		values[x] = calc_op(values[2*x+1], values[2*x+2]);
 	}
- 
-	void modify(int l, int r, long long v){
+
+	void modify(int l, int r, SegmentType v){
 		modify(l,r,v,0,0,size);
 	}
- 
-	long long calc(int l, int r, int x, int lx, int rx){
+
+	SegmentType calc(int l, int r, int x, int lx, int rx){
 		propagate(x, lx, rx);
 		if(r <= lx || l >= rx){
 			return NEUTRAL_ELEMENT;
 		}
- 
+
 		if(r >= rx && l <= lx){
 			return values[x];
 		}
- 
+
 		int m = (lx + rx) / 2;
- 
+
 		auto first = calc(l,r,2*x+1,lx,m);
 		auto second = calc(l,r,2*x+2,m,rx);
 
 		return calc_op(first, second);
 	}
- 
-	long long calc(int l, int r){
+
+	SegmentType calc(int l, int r){
 		return calc(l,r,0,0,size);
 	}
 };

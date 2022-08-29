@@ -10,6 +10,7 @@ struct item{
 	// END_NEEDS_CHANGE
 };
 
+template<typename SegmentType>
 struct segtree{
 	int size;
 	vector<item> values;
@@ -21,7 +22,7 @@ struct segtree{
 		return {a.value + b.value};
 	}
 
-	item single(int value){
+	item single(SegmentType value){
 		return {value};
 	}
 	// END_NEEDS_CHANGE
@@ -32,7 +33,7 @@ struct segtree{
 		values.resize(size*2);
 	}
 
-	void build(vector<int>& a, int x, int lx, int rx){
+	void build(vector<SegmentType>& a, int x, int lx, int rx){
 		if(rx - lx == 1){
 			if(lx < (int)a.size()){
 				values[x] = single(a[lx]);
@@ -45,11 +46,11 @@ struct segtree{
 		values[x] = merge(values[2*x+1], values[2*x+2]);
 	}
 
-	void build(vector<int>& a){
+	void build(vector<SegmentType>& a){
 		build(a, 0, 0, size);
 	}
 
-	void set(int i, int v, int x, int lx, int rx){
+	void set(int i, SegmentType v, int x, int lx, int rx){
 		if(rx - lx == 1){
 			values[x] = single(v);
 			return;
@@ -64,7 +65,7 @@ struct segtree{
 		values[x] = merge(values[2*x+1], values[2*x+2]);
 	}
 
-	void set(int i, int v){
+	void set(int i, SegmentType v){
 		set(i,v,0,0,size);
 	}
 

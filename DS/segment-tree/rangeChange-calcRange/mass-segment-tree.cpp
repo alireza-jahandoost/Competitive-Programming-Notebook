@@ -4,32 +4,33 @@
 // modify(l, r, v): modify elements from l to r by v
 // calc(l, r): returns calculation of [l,r)
 
+template <typename SegmentType>
 struct segtree{
 	int size;
-	vector<long long> operations;
-	vector<long long> values;
+	vector<SegmentType> operations;
+	vector<SegmentType> values;
 	// NEEDS_CHANGE
-	const long long INITIAL_OPERATION_VALUE = 0;
-	const long long INITIAL_VALUES_VALUE = 0;
-	const long long NEUTRAL_ELEMENT = LLONG_MAX;
+	const SegmentType INITIAL_OPERATION_VALUE = 0;
+	const SegmentType INITIAL_VALUES_VALUE = 0;
+	const SegmentType NEUTRAL_ELEMENT = LLONG_MAX;
 
-	long long modify_op(long long a, long long b, long long len){
+	SegmentType modify_op(SegmentType a, SegmentType b, long long len){
 		return a + b;
 	}
 
-	long long calc_op(long long a, long long b){
+	SegmentType calc_op(SegmentType a, SegmentType b){
 		return min(a,b);
 	}
 	// END_NEEDS_CHANGE
 
-	void apply_modify(long long &a, long long b, long long len){
+	void apply_modify(SegmentType &a, SegmentType b, long long len){
 		a = modify_op(a,b,len);
 	}
 
-	void apply_calc(long long &a, long long b){
+	void apply_calc(SegmentType &a, SegmentType b){
 		a = calc_op(a,b);
 	}
- 
+
 	void init(int n){
 		size = 1;
 		while(size < n) size *= 2;
@@ -53,49 +54,49 @@ struct segtree{
 	void build(vector<int>&a){
 		build(a, 0, 0, size);
 	}
- 
+
 	void modify(int l, int r, int v, int x, int lx, int rx){
 		if(r <= lx || l >= rx){
 			return;
 		}
- 
+
 		if(r >= rx && l <= lx){
 			apply_modify(operations[x], v, 1);
 			apply_modify(values[x], v, rx - lx);
 			return;
 		}
- 
+
 		int m = (lx + rx) / 2;
- 
+
 		modify(l,r,v,2*x+1,lx,m);
 		modify(l,r,v,2*x+2,m,rx);
 
 		values[x] = calc_op(values[2*x+1], values[2*x+2]);
 		apply_modify(values[x], operations[x], rx - lx);
 	}
- 
+
 	void modify(int l, int r, int v){
 		modify(l,r,v,0,0,size);
 	}
- 
-	long long calc(int l, int r, int x, int lx, int rx){
+
+	SegmentType calc(int l, int r, int x, int lx, int rx){
 		if(r <= lx || l >= rx){
 			return NEUTRAL_ELEMENT;
 		}
- 
+
 		if(r >= rx && l <= lx){
 			return values[x];
 		}
- 
+
 		int m = (lx + rx) / 2;
- 
+
 		auto first = calc(l,r,2*x+1,lx,m);
 		auto second = calc(l,r,2*x+2,m,rx);
 
 		return modify_op(calc_op(first, second), operations[x], (min(r,rx) - max(l,lx)));
 	}
- 
-	long long calc(int l, int r){
+
+	SegmentType calc(int l, int r){
 		return calc(l,r,0,0,size);
 	}
 };
